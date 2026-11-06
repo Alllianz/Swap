@@ -29,7 +29,6 @@ pub struct SwapFitnessResult {
     pub slope_oos: f64,
 }
 
-
 /// Calcula el coeficiente de determinación R² y la pendiente mediante regresión lineal
 pub fn calculate_series_r2(curve: &[(i64, f64)]) -> (f64, f64) {
     let n = curve.len();
@@ -80,7 +79,7 @@ pub fn evaluate_equity_linearity(curve: &[(i64, f64)], is_bars: usize) -> Linear
     let (r2_global, slope_global) = calculate_series_r2(curve);
 
     let (is_slice, oos_slice) = if curve.len() <= is_bars {
-        let train_len = ((curve.len() as f64) * 0.70).round() as usize;
+        let train_len = ((curve.len() as f64) * 0.50).round() as usize;
         (&curve[0..train_len], &curve[train_len..])
     } else {
         let is_len = is_bars.min(curve.len());
@@ -152,7 +151,12 @@ pub fn evaluate_swap_fitness(report: &SwapReport, is_bars: usize) -> SwapFitness
 
     let lin = evaluate_equity_linearity(curve, is_bars);
 
-    let is_len = is_bars.min(curve.len());
+    let is_len = if curve.len() <= is_bars {
+        let train_len = ((curve.len() as f64) * 0.50).round() as usize;
+        train_len.min(curve.len())
+    } else {
+        is_bars.min(curve.len())
+    };
     let oos_len = curve.len().saturating_sub(is_len);
 
     let (slope_is, slope_oos) = if is_len > 0 && oos_len > 0 {

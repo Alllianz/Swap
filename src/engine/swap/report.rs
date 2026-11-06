@@ -1,10 +1,12 @@
-use super::types::SwapTradeRecord;
+use super::types::{AssetId, MarginMode, SwapTradeRecord};
 use serde::{Deserialize, Serialize};
 
 /// Reporte cuantitativo integral de rendimiento para una estrategia de Swap
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SwapReport {
     pub strategy_name: String,
+    pub margin_mode: MarginMode,
+    pub leverage: f64,
     pub initial_capital: f64,
     pub final_capital: f64,
     pub net_profit: f64,
@@ -20,10 +22,17 @@ pub struct SwapReport {
     pub profitable_swaps: usize,
     pub win_rate_swaps_pct: f64,
 
-    // Distribución porcentual del tiempo de exposición
+    // Distribución porcentual del tiempo de exposición Long
     pub exposure_btc_pct: f64,
     pub exposure_gold_pct: f64,
     pub exposure_sp500_pct: f64,
+
+    // Distribución porcentual del tiempo de exposición Short
+    pub exposure_short_btc_pct: f64,
+    pub exposure_short_gold_pct: f64,
+    pub exposure_short_sp500_pct: f64,
+
+    // Preservación en Cash
     pub exposure_cash_pct: f64,
 
     // Comparativas con Benchmarks pasivos
@@ -38,12 +47,19 @@ pub struct SwapReport {
     pub equity_curve: Vec<(i64, f64)>,
     // Historial completo de operaciones de swap
     pub trades: Vec<SwapTradeRecord>,
+    // Historial de asignaciones por barra: (asset_1, weight_1, asset_2, weight_2)
+    #[serde(default)]
+    pub daily_allocations: Vec<(AssetId, f64, Option<AssetId>, f64)>,
 }
 
 impl SwapReport {
     pub fn print_summary_card(&self) {
         println!("  ┌────────────────────────────────────────────────────────────────────────┐");
         println!("  │  ESTRATEGIA: {:<58}│", self.strategy_name);
+        println!(
+            "  │  MODO CAPITAL: {:<56}│",
+            format!("{} ({:.1}X)", self.margin_mode.name(), self.leverage)
+        );
         println!("  ├────────────────────────────────────────────────────────────────────────┤");
         println!(
             "  │  Capital Inicial:   ${:<14.2} │ Capital Final:     ${:<15.2}│",
@@ -70,12 +86,15 @@ impl SwapReport {
             self.total_fees_paid, self.max_drawdown_duration_bars
         );
         println!("  ├────────────────────────────────────────────────────────────────────────┤");
-        println!("  │  DISTRIBUCIÓN DEL TIEMPO EN CARTERA:                                  │");
+        println!("  │  DISTRIBUCIÓN DE EXPOSICIÓN (LONG / SHORT / CASH):                    │");
         println!(
-            "  │  • BTC: {:>5.1}%   • ORO: {:>5.1}%   • SP500: {:>5.1}%   • CASH: {:>5.1}%    │",
-            self.exposure_btc_pct,
-            self.exposure_gold_pct,
-            self.exposure_sp500_pct,
+            "  │  • BTC:   Long {:>4.1}% | Short {:>4.1}%   • ORO: Long {:>4.1}% | Short {:>4.1}%  │",
+            self.exposure_btc_pct, self.exposure_short_btc_pct,
+            self.exposure_gold_pct, self.exposure_short_gold_pct
+        );
+        println!(
+            "  │  • SP500: Long {:>4.1}% | Short {:>4.1}%   • CASH: {:>5.1}%                     │",
+            self.exposure_sp500_pct, self.exposure_short_sp500_pct,
             self.exposure_cash_pct
         );
         println!("  ├────────────────────────────────────────────────────────────────────────┤");

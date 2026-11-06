@@ -5,8 +5,8 @@ pub mod session;
 pub use header::print_swap_header;
 pub use prompts::{pause, prompt_swap_config, prompt_timeframe};
 pub use session::{
-    run_comparative_leaderboard, run_download_menu, run_optimization_session,
-    run_single_swap_strategy,
+    run_comparative_leaderboard, run_download_menu, run_leverage_sweep_session,
+    run_optimization_session, run_ruta_b_population_session, run_single_swap_strategy,
 };
 
 use crate::data::db::{init_candles_db, print_db_summary};
@@ -29,16 +29,17 @@ pub async fn run_interactive_app() -> Result<(), Box<dyn Error + Send + Sync>> {
         println!("  [2] 📥 Descargar/Actualizar Velas (PAXG / BTC en Binance & SPY en Yahoo)");
         println!();
         println!("  ── 🚀 ARQUITECTURAS DE SWAP TRI-ACTIVO (BTC | ORO | SP500) ──");
-        println!("  [3] 🌲 Simular RUTA A: SWAP GBDT Tri-Activo (Scoring & Ranking ML)");
-        println!("  [4] 📈 Simular RUTA B: Dual Momentum Sistemático (Relative + Absolute + Vol-Target)");
-        println!("  [5] 🧬 Simular RUTA C: Híbrido de Regímenes Macroeconómicos (Risk-On / Growth / Defensive)");
+        println!("  [3] 🌲 Simular GBDT Tri-Activo (Scoring & Ranking ML)");
+        println!("  [4] 📈 Simular Dual Momentum 50/50 (Individuos y Población Cross-Asset)");
         println!();
         println!("  ── 🏆 BENCHMARKING Y OPTIMIZACIÓN INSTITUCIONAL SWAP ──");
-        println!("  [6] 🏆 Leaderboard Comparativo Simultáneo (A vs B vs C vs Benchmarks Buy & Hold)");
-        println!("  [7] 🧬 Auto-Optimización SWAP EVO Max (Métrica SWAP Fitness en Intersección Real)");
+        println!("  [5] ⚔️ Comparativa Mano a Mano (2 o 3 Estrategias vs Benchmarks Buy & Hold)");
+        println!("  [6] 🧬 Auto-Optimización SWAP EVO Max (Métrica SWAP Fitness en Intersección Real)");
+        println!("  [7] 📈 Población Exclusiva Dual Momentum (18 Individuos 50/50 en Dashboard)");
+        println!("  [8] ⚡ Estudio Multi-Apalancamiento (Sweep 1X a 10X en Consola y Dashboard)");
         println!();
         println!("  [0] 🚪 Salir");
-        print!("\n  👉 Selecciona una opción (0-7) [Por defecto '7']: ");
+        print!("\n  👉 Selecciona una opción (0-8) [Por defecto '8']: ");
         let _ = io::stdout().flush();
 
         let mut input = String::new();
@@ -64,13 +65,16 @@ pub async fn run_interactive_app() -> Result<(), Box<dyn Error + Send + Sync>> {
                 run_single_swap_strategy(&conn, "B")?;
             }
             "5" => {
-                run_single_swap_strategy(&conn, "C")?;
-            }
-            "6" => {
                 run_comparative_leaderboard(&conn)?;
             }
-            "7" | "" => {
+            "6" => {
                 run_optimization_session(&conn)?;
+            }
+            "7" => {
+                run_ruta_b_population_session(&conn)?;
+            }
+            "8" | "" => {
+                run_leverage_sweep_session(&conn, None)?;
             }
             _ => {
                 println!("  ⚠️ Opción no válida.");

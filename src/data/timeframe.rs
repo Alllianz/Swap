@@ -7,8 +7,6 @@ pub fn normalize_timeframe(tf: &str) -> String {
     let lower = clean.to_lowercase();
     if lower.ends_with('m') {
         lower
-    } else if lower.ends_with('h') || lower.ends_with('d') || lower.ends_with('w') {
-        clean.to_uppercase()
     } else {
         clean.to_uppercase()
     }

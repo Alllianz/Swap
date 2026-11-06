@@ -5,9 +5,23 @@ use serde::{Deserialize, Serialize};
 pub struct StrategyAllocationPointDto {
     pub timestamp: i64,
     pub date: String,
-    pub asset: String,      // "BTC", "GOLD", "SP500", "CASH"
+    pub asset: String,      // "BTC", "GOLD", "50% BTC + 50% GOLD", "CASH", etc.
     pub equity: f64,
     pub drawdown_pct: f64,
+    #[serde(default)]
+    pub weight_btc: f64,
+    #[serde(default)]
+    pub weight_gold: f64,
+    #[serde(default)]
+    pub weight_sp500: f64,
+    #[serde(default)]
+    pub weight_sh_btc: f64,
+    #[serde(default)]
+    pub weight_sh_gold: f64,
+    #[serde(default)]
+    pub weight_sh_sp500: f64,
+    #[serde(default)]
+    pub weight_cash: f64,
 }
 
 /// Registro de una rotación o swap de activos
@@ -42,6 +56,38 @@ pub struct YearlyPerformanceDto {
     pub beat_sp500: bool,
 }
 
+/// Métricas de un tramo temporal (IS / OOS / COMPLETO)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SectionKpiDto {
+    pub score: f64,
+    pub return_pct: f64,
+    pub pnl_usd: f64,
+    pub diff_vs_bh_pct: f64,
+    pub bh_return_pct: f64,
+    pub trades: usize,
+    pub total_bars: usize,
+    pub max_dd_pct: f64,           // vs capital inicial
+    pub max_dd_usd: f64,
+    pub max_dd_pico_pct: f64,      // vs pico
+    pub max_stagnation_bars: usize,
+    pub bh_max_dd_pico_pct: f64,
+    pub start_date: String,
+    pub end_date: String,
+}
+
+/// Conjunto de métricas robustas multisección y retención (SWAP Standard)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RobustSectionMetricsDto {
+    pub score_is: f64,
+    pub score_oos: f64,
+    pub score_completo: f64,
+    pub retention_pct: f64,
+    pub retention_velas_pct: f64,
+    pub is_section: SectionKpiDto,
+    pub oos_section: SectionKpiDto,
+    pub completo_section: SectionKpiDto,
+}
+
 /// Bloque de métricas financieras de una estrategia de Swap
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SwapMetricsDto {
@@ -58,6 +104,9 @@ pub struct SwapMetricsDto {
     pub exposure_btc_pct: f64,
     pub exposure_gold_pct: f64,
     pub exposure_sp500_pct: f64,
+    pub exposure_short_btc_pct: f64,
+    pub exposure_short_gold_pct: f64,
+    pub exposure_short_sp500_pct: f64,
     pub exposure_cash_pct: f64,
     pub swap_fitness_score: f64,
     pub capital_dd_ratio: f64,
@@ -71,11 +120,14 @@ pub struct SwapDashboardStrategyDto {
     pub id: String,
     pub name: String,
     pub architecture: String,
+    pub margin_mode: String,
+    pub leverage: f64,
     pub color: String,
     pub initial_capital: f64,
     pub final_capital: f64,
     pub net_profit: f64,
     pub metrics: SwapMetricsDto,
+    pub section_metrics: RobustSectionMetricsDto,
     pub equity_curve: Vec<f64>,
     pub drawdown_curve: Vec<f64>,
     pub allocations: Vec<StrategyAllocationPointDto>,

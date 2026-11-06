@@ -3,8 +3,7 @@ pub fn render_compare_charts_section() -> &'static str {
 <section id="comparativa">
   <div class="section-head">
     <div>
-      <h2>Herramientas Visuales Multiactivo: Curvas, Drawdowns y Asignación</h2>
-      <p class="sub">Visualización interactiva punto a punto. Compara el crecimiento de capital, profundidad de caídas y dinámica de rotación entre estrategias y activos subyacentes.</p>
+      <h2>Gráficos Comparativos</h2>
     </div>
   </div>
 
@@ -45,8 +44,7 @@ pub fn render_compare_charts_section() -> &'static str {
     <div class="tab-panel active" id="tab-curvas">
       <div class="panel-header">
         <div class="panel-info">
-          <h3>C1 · Evolución de Capital Normalizado a Base 100</h3>
-          <p>Muestra cómo habría evolucionado \$100 invertidos en cada estrategia versus el Buy & Hold de Bitcoin, Oro Físico, S&P 500 y la Cartera Equitativa (1/3 c/u). Haz clic en la leyenda para ocultar/mostrar cualquier curva.</p>
+          <h3>C1 · Evolución de Capital Normalizado a Base 100 (Top 5 Mejores Estrategias vs Benchmarks)</h3>
         </div>
         <div class="legend-toggles" id="curvas-toggles">
           <!-- Checkboxes dinámicos -->
@@ -61,7 +59,7 @@ pub fn render_compare_charts_section() -> &'static str {
     <div class="tab-panel" id="tab-drawdowns">
       <div class="panel-header">
         <div class="panel-info">
-          <h3>C2 · Curvas de Drawdown Superpuestas</h3>
+          <h3>C2 · Curvas de Drawdown Superpuestas vs Capital Total (Pico)</h3>
           <p>Evalúa el riesgo de cola y la protección de capital durante caídas de mercado severas (ej. criptoinvierno 2022 o correcciones bursátiles). Identifica si la estrategia amortigua o elimina las caídas profundas de BTC (-77%) o SPY (-25%).</p>
         </div>
       </div>

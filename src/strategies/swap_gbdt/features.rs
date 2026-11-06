@@ -73,7 +73,7 @@ fn calc_sma<F: Fn(&SynchronizedBar) -> f64>(
     extractor: F,
 ) -> f64 {
     let start = curr.saturating_sub(window - 1);
-    let sum: f64 = history[start..=curr].iter().map(|b| extractor(b)).sum();
+    let sum: f64 = history[start..=curr].iter().map(extractor).sum();
     sum / (window as f64)
 }
 

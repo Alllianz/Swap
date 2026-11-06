@@ -37,11 +37,11 @@ impl TriAssetModel for RegimeHybridStrategy {
 
         let target_asset = regime.target_asset();
 
-        SwapDecision {
+        SwapDecision::single(
             target_asset,
-            confidence_score: confidence,
-            explanation: format!("[{}] {}", regime.description(), explanation),
-        }
+            confidence,
+            format!("[{}] {}", regime.description(), explanation),
+        )
     }
 
     fn reset(&mut self) {

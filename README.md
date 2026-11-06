@@ -39,8 +39,15 @@ Combina:
 
 ---
 
-## 🌐 Dashboard Visual Multiactivo
-El motor genera un dashboard HTML interactivo standalone (`dashboard/dashboard_swap_1d.html`):
+## 🌐 Dashboards Visuales Multiactivo y de Optimización
+El motor genera dashboards HTML interactivos standalone en la carpeta `dashboard/`:
+- **`dashboard_A.html`**: Auditoría completa de la optimización de la **Ruta A (SWAP GBDT ML)**, incluyendo todos los candidatos evaluados clasificados por SWAP Fitness Score (con el ganador en 1° puesto) frente a los benchmarks de mercado.
+- **`dashboard_B.html`**: Auditoría completa de la optimización de la **Ruta B (SWAP Dual Momentum)** con todas las configuraciones evaluadas.
+- **`dashboard_C.html`**: Auditoría completa de la optimización de la **Ruta C (SWAP Híbrido de Regímenes Macroeconómicos)**.
+- **`dashboard_comparativo.html`**: Comparativa simultánea directa de las **3 mejores configuraciones optimizadas (Ganador A vs Ganador B vs Ganador C)** frente a los 4 benchmarks pasivos (BTC, Oro, S&P 500 y Cartera Equitativa 1/3).
+- **`dashboard_swap_1d.html`**: Dashboard general multiactivo.
+
+Cada dashboard incluye:
 - **C1 · Curvas en Base 100**: Comparativa interactiva conmutable en escala logarítmica/lineal contra Buy & Hold de BTC, ORO, SPY y Cartera Equitativa (1/3 cada uno).
 - **C2 · Drawdown Superpuesto**: Comparación de caídas máximas frente al -77% histórico de BTC.
 - **C3 · Cronograma de Asignación (Timeline)**: Mapa visual temporal de en qué activo estuvo posicionado el capital día por día.
@@ -57,9 +64,6 @@ Compilado al 100% en Rust:
 # Compilar en modo release
 cargo build --release
 
-# Ejecutar terminal interactiva de SWAP
+# Ejecutar terminal interactiva de SWAP (Opción [7] genera automáticamente los 4 dashboards)
 cargo run --release
-
-# Ejecutar tests de validación causal y generación de dashboard
-cargo test
 ```

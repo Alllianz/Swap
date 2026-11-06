@@ -69,7 +69,7 @@ pub fn calculate_stagnation_episodes(curve: &[(i64, f64)]) -> Vec<StagnationEpis
     push_episode_if_valid(&mut episodes, peak_idx, n - 1, peak, trough, true, curve);
 
     // Ordenar de mayor a menor duración en velas
-    episodes.sort_by(|a, b| b.length_bars.cmp(&a.length_bars));
+    episodes.sort_by_key(|a| std::cmp::Reverse(a.length_bars));
 
     // Asignar rangos (1º, 2º, 3º...)
     for (i, ep) in episodes.iter_mut().enumerate() {

@@ -1,5 +1,3 @@
-pub mod backtest_report;
-pub mod capital_progression;
 pub mod drawdown;
 pub mod neighborhood;
 pub mod ranking;
@@ -8,8 +6,6 @@ pub mod stagnation;
 pub mod swap_fitness;
 pub mod yearly_returns;
 
-pub use backtest_report::{calculate_metrics, BacktestReport};
-pub use capital_progression::{compute_capital_progression, CapitalProgressionSummary};
 pub use drawdown::{compute_drawdown_series, DrawdownPoint, DrawdownSummary};
 pub use neighborhood::{NeighborhoodCell, NeighborhoodGrid};
 pub use ranking::{compute_multicriteria_rankings, CandidateRankScore};

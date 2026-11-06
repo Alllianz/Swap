@@ -3,7 +3,7 @@ use crate::engine::swap::types::{AssetId, SynchronizedBar};
 use super::features::extract_cross_asset_features;
 use super::gbdt::SwapGbdtEnsemble;
 
-/// Estrategia de Ensamble SWAP GBDT Tri-Activo (Ruta A).
+/// Estrategia de Ensamble SWAP GBDT Tri-Activo (Ruta A - Long/Short/Cash).
 /// Ejecuta inferencia multimodelo mediante árboles de boosting de decisión
 /// sobre 16 variables cuantitativas cross-asset sin Look-Ahead Bias.
 pub struct SwapGbdtStrategy {
@@ -12,16 +12,18 @@ pub struct SwapGbdtStrategy {
     pub gold_model: SwapGbdtEnsemble,
     pub sp500_model: SwapGbdtEnsemble,
     pub cash_threshold: f32,
+    pub allow_shorts: bool,
 }
 
 impl Default for SwapGbdtStrategy {
     fn default() -> Self {
         Self {
-            name: "Ruta A: SWAP GBDT Tri-Activo (Scoring & Ranking ML)".to_string(),
+            name: "Ruta A: SWAP GBDT Tri-Activo (Scoring & Ranking ML Long/Short)".to_string(),
             btc_model: SwapGbdtEnsemble::build_btc_model(),
             gold_model: SwapGbdtEnsemble::build_gold_model(),
             sp500_model: SwapGbdtEnsemble::build_sp500_model(),
             cash_threshold: -0.15,
+            allow_shorts: true,
         }
     }
 }
@@ -34,7 +36,13 @@ impl SwapGbdtStrategy {
             gold_model: SwapGbdtEnsemble::build_gold_model(),
             sp500_model: SwapGbdtEnsemble::build_sp500_model(),
             cash_threshold,
+            allow_shorts: true,
         }
+    }
+
+    pub fn with_shorts(mut self, allow_shorts: bool) -> Self {
+        self.allow_shorts = allow_shorts;
+        self
     }
 }
 
@@ -45,11 +53,11 @@ impl TriAssetModel for SwapGbdtStrategy {
 
     fn evaluate(&mut self, history: &[SynchronizedBar], current_step: usize) -> SwapDecision {
         if current_step < 35 {
-            return SwapDecision {
-                target_asset: AssetId::Cash,
-                confidence_score: 0.0,
-                explanation: "Inicializando histórico causal para variables SWAP".to_string(),
-            };
+            return SwapDecision::single(
+                AssetId::Cash,
+                0.0,
+                "Inicializando histórico causal para variables SWAP".to_string(),
+            );
         }
 
         let feats = extract_cross_asset_features(history, current_step);
@@ -71,19 +79,36 @@ impl TriAssetModel for SwapGbdtStrategy {
         let margin = (winner_score - runner_up_score).abs() as f64;
 
         if winner_score < self.cash_threshold {
-            SwapDecision {
-                target_asset: AssetId::Cash,
-                confidence_score: 0.2,
-                explanation: format!(
-                    "SWAP GBDT detecta régimen bajista general (BTC: {:.2}, ORO: {:.2}, SP: {:.2}). Alocación en CASH",
+            // Mercado general por debajo del umbral de Cash.
+            // Si las posiciones cortas están habilitadas y el peor activo presenta fuerte aceleración bajista:
+            let (loser_asset, loser_score) = scores[2];
+
+            if self.allow_shorts && loser_score < -0.22
+                && let Some(short_target) = loser_asset.to_short()
+            {
+                return SwapDecision::single(
+                    short_target,
+                    (loser_score.abs() * 0.6) as f64,
+                    format!(
+                        "SWAP GBDT detecta alta probabilidad bajista en {} (Score: {:.3}). Entrada Táctica en {}",
+                        loser_asset.symbol(), loser_score, short_target.name()
+                    ),
+                );
+            }
+
+            SwapDecision::single(
+                AssetId::Cash,
+                0.2,
+                format!(
+                    "SWAP GBDT detecta régimen bajista general (BTC: {:.2}, ORO: {:.2}, SP: {:.2}). Alocación defensiva en CASH",
                     score_btc, score_gold, score_sp500
                 ),
-            }
+            )
         } else {
-            SwapDecision {
-                target_asset: winner_asset,
-                confidence_score: margin,
-                explanation: format!(
+            SwapDecision::single(
+                winner_asset,
+                margin,
+                format!(
                     "SWAP GBDT selecciona {} (Score: {:.3}, Ventaja: +{:.3}) | [BTC: {:.2}, ORO: {:.2}, SP500: {:.2}]",
                     winner_asset.symbol(),
                     winner_score,
@@ -92,7 +117,9 @@ impl TriAssetModel for SwapGbdtStrategy {
                     score_gold,
                     score_sp500
                 ),
-            }
+            )
         }
     }
+
+    fn reset(&mut self) {}
 }

@@ -7,7 +7,8 @@ pub mod types;
 
 pub use model::{SwapDecision, TriAssetModel};
 pub use optimizer::{
-    run_swap_intersection_optimization, CandidateOptimizationResult,
+    run_ruta_b_population_optimization, run_swap_intersection_optimization,
+    CandidateOptimizationResult,
 };
 pub use report::SwapReport;
 pub use simulator::SwapSimulator;

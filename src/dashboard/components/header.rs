@@ -13,7 +13,6 @@ pub fn render_header(
       <div>
         <p class="eyebrow">SWAP QUANT ENGINE · ROTACIÓN MULTIACTIVO · __TIMEFRAME__</p>
         <h1>__TITLE__</h1>
-        <p class="lead">Plataforma Cuantitativa de Rotación Sistemática entre <b>Bitcoin (BTC)</b>, <b>Oro Físico (PAXG)</b> y <b>S&P 500 (SPY)</b>. Auditoría de curvas base 100, drawdowns superpuestos, cronograma de exposición y control estricto de fricción operativa.</p>
       </div>
       <div class="hero-badges">
         <div class="badge-item">
@@ -30,15 +29,15 @@ pub fn render_header(
         </div>
       </div>
     </div>
-    <p class="nota"><b>Estándar Cuantitativo Allianz:</b> Evaluación en streaming causal estricto. Las señales de intercambio se generan con el cierre de la vela $t$ y se ejecutan sin anticipar el futuro. Comparación transparente y punto a punto contra los 3 activos individuales y cartera equitativa.</p>
   </div>
 </header>
 
 <nav class="top" aria-label="Secciones">
   <div class="wrap">
     <div class="links">
-      <a href="#leaderboard">Leaderboard Institucional</a>
-      <a href="#comparativa">Gráficos Comparativos (Curvas, Drawdowns, Asignación)</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#mano-a-mano">Comparador Mano a Mano</a>
+      <a href="#comparativa">Gráficos Comparativos</a>
       <a href="#anual">Retornos Anuales</a>
       <a href="#detalle">Detalle de Estrategia</a>
       <a href="#rotaciones">Registro de Rotaciones (Swaps)</a>

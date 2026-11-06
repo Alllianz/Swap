@@ -3,12 +3,41 @@ use super::types::{AssetId, SynchronizedBar};
 /// Decisión emitida por una estrategia o modelo de intercambio tri-activo
 #[derive(Debug, Clone)]
 pub struct SwapDecision {
-    /// Activo seleccionado para alocar el capital
+    /// Activo seleccionado para alocar el capital (o Slot 1 / 50% en dual)
     pub target_asset: AssetId,
+    /// Activo secundario opcional (Slot 2 / 50% en carteras duales)
+    pub secondary_asset: Option<AssetId>,
     /// Puntuación de convicción o ventaja relativa (para auditoría e histéresis)
     pub confidence_score: f64,
     /// Razón explicativa textual para logging y auditoría cuantitativa
     pub explanation: String,
+}
+
+impl SwapDecision {
+    /// Construye una decisión de alocación al 100% en un solo activo
+    pub fn single(target_asset: AssetId, confidence_score: f64, explanation: String) -> Self {
+        Self {
+            target_asset,
+            secondary_asset: None,
+            confidence_score,
+            explanation,
+        }
+    }
+
+    /// Construye una decisión de alocación dual dividida (50% activo 1, 50% activo 2)
+    pub fn dual(
+        primary_asset: AssetId,
+        secondary_asset: AssetId,
+        confidence_score: f64,
+        explanation: String,
+    ) -> Self {
+        Self {
+            target_asset: primary_asset,
+            secondary_asset: Some(secondary_asset),
+            confidence_score,
+            explanation,
+        }
+    }
 }
 
 /// Trait unificado para cualquier modelo de rotación / intercambio tri-activo.

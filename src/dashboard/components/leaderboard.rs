@@ -3,9 +3,13 @@ pub fn render_leaderboard_section() -> &'static str {
 <section id="leaderboard">
   <div class="section-head">
     <div>
-      <h2>Leaderboard Comparativo Institucional (Estrategias vs Activos)</h2>
-      <p class="sub">Auditoría simultánea de rendimiento de las estrategias cuantitativas de SWAP frente al Buy & Hold pasivo de los 3 activos (BTC, ORO, SPY) y la cartera balanceada (1/3 cada uno).</p>
+      <h2>Leaderboard</h2>
     </div>
+  </div>
+
+  <!-- Podio Top 3 -->
+  <div class="podio" id="lb-podio">
+    <!-- Generado dinámicamente -->
   </div>
 
   <div class="pod">
@@ -13,17 +17,20 @@ pub fn render_leaderboard_section() -> &'static str {
       <table class="tabla" id="tabla-leaderboard">
         <thead>
           <tr>
+            <th class="al-l">#</th>
             <th class="al-l">Activo / Estrategia</th>
-            <th class="al-l">Arquitectura / Tipo</th>
+            <th class="al-r">Score IS</th>
+            <th class="al-r">Score OOS</th>
+            <th class="al-r">Score COMP</th>
+            <th class="al-r" title="Retención Score OOS / IS">Ret %</th>
+            <th class="al-r" title="Retención normalizada por cantidad de velas IS vs OOS">Ret por velas</th>
             <th class="al-r">Retorno Total</th>
-            <th class="al-r">CAGR</th>
+            <th class="al-r">Retorno OOS</th>
+            <th class="al-r">vs B&H (BTC)</th>
+            <th class="al-r" title="Max Drawdown en período OOS">Max DD OOS</th>
+            <th class="al-r">Max Estanc.</th>
+            <th class="al-r">Swaps</th>
             <th class="al-r">Sharpe</th>
-            <th class="al-r">Sortino</th>
-            <th class="al-r">Max Drawdown</th>
-            <th class="al-r">Calmar</th>
-            <th class="al-r">SWAP Fitness</th>
-            <th class="al-r">Rotaciones</th>
-            <th class="al-r">Comisiones</th>
             <th class="al-c">Exposición Cartera (BTC | ORO | SPY | CASH)</th>
           </tr>
         </thead>
